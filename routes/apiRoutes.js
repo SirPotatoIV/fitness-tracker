@@ -30,7 +30,7 @@ module.exports = {
             // console.log(body, params)
             const workoutId = params.id;
             let savedExercises = [];
-            
+
             // gets all the currently saved exercises in the current workout
             db.Workout.find({_id: workoutId})
                 .then(dbWorkout => {
@@ -56,6 +56,14 @@ module.exports = {
                 
         })
 
-
+       app.get("/api/workouts/range", (req, res) => {
+            db.Workout.find({})
+            .then(workout => {
+                res.json(workout);
+            })
+            .catch(err => {
+                res.json(err);
+            });
+        });
     }
 };
