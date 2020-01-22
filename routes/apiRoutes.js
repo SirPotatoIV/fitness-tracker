@@ -14,17 +14,37 @@ module.exports = {
             });
         });
         
+        // Creates a new workout in the workout database
+        app.post("/api/workouts", async (req, res)=> {
+            try{
+                const response = await db.Workout.create({type: "workout"})
+                res.json(response);
+            }
+            catch(err){
+                console.log("error occurred creating a workout: ", err)
+            }
+        })
+
         // Used by api.js to add an exercise to a workout
-        app.put("/api/workouts/:id", ({body}, res) => {
-            const workoutId = body.params.id;
-            
-            db.Workout.update({body})
-            .then(dbWorkout => {
-                res.json(dbWorkout);
-            })
-            .catch(err => {
-                res.json(err);
-            });
-        });
+        app.put("/api/workouts/:id", async ({body, params}, res) => {
+            // console.log(body, params)
+            const workoutId = params.id;
+            let savedExercises = [];
+            // gets all the currently saved exercises in the current workout
+            db.Workout.find({_id: workoutId})
+                .then(dbWorkout => {
+                    // console.log(dbWorkout)
+                    savedExercises = dbWorkout[0].exercises;
+                    res.json(dbWorkout[0].exercises);
+                    const allExercises = [...savedExercises, body]
+                    console.log(allExercises)
+                })
+                // adds the newest exercise to the excercise array on the current workout
+                .then(db.Workout.findByIdAndUpdate(workoutId, {exercises: body}))
+                .catch(err => {
+                    res.json(err);
+                });
+                
+        })
     }
 };
