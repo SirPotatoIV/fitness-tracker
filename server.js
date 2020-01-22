@@ -18,16 +18,13 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workoutdb", { u
 
 const db = require("./models");
 
-// Used by api.js to get last workout
-app.get("/api/workouts", (req, res) => {
-  db.Workout.find({})
-    .then(workout => {
-      res.json(workout);
-    })
-    .catch(err => {
-      res.json(err);
-    });
-});
+const API = require("./routes/apiRoutes");
+API.api(app);
+
+// require("./routes/api-routes")(app);
+
+require("./routes/htmlRoutes")(app);
+
 
 // app.post("/submit", ({ body }, res) => {
 //   const user = new User(body);
